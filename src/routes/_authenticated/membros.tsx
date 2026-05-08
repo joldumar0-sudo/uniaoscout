@@ -27,10 +27,16 @@ function Membros() {
   const load = async () => {
     const [{ data: p }, { data: a }, { data: n }] = await Promise.all([
       supabase.from("profiles").select("id, full_name, email, agrupamento_id").order("full_name"),
-      supabase.from("agrupamentos").select("id, numero, nome").order("numero"),
+      supabase.from("agrupamentos").select("id, numero, nome, paroquia").order("numero"),
       supabase.from("nominations").select("id, cargo, user_id, agrupamento_id, profiles:profiles!nominations_user_id_fkey(full_name, email)"),
     ]);
     setProfiles(p ?? []); setAgs(a ?? []); setNoms(n ?? []);
+  };
+
+  const updateAg = async (id: string, patch: { nome?: string; paroquia?: string }) => {
+    const { error } = await supabase.from("agrupamentos").update(patch).eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Agrupamento atualizado"); load();
   };
 
   useEffect(() => { load(); }, []);
