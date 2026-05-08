@@ -32,7 +32,7 @@ function LoginPage() {
           email, password,
           options: {
             emailRedirectTo: `${window.location.origin}/dashboard`,
-            data: { full_name: fullName },
+            data: { full_name: fullName, agrupamento_numero: agrupamentoNumero || null },
           },
         });
         if (error) throw error;
