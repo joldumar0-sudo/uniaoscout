@@ -12,8 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedGaleriaRouteImport } from './routes/_authenticated/galeria'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
+import { Route as AuthenticatedBibliotecaRouteImport } from './routes/_authenticated/biblioteca'
+import { Route as AuthenticatedAlcateiaRouteImport } from './routes/_authenticated/alcateia'
 import { Route as AuthenticatedEquipamentosIndexRouteImport } from './routes/_authenticated/equipamentos.index'
 import { Route as AuthenticatedAgrupamentosIndexRouteImport } from './routes/_authenticated/agrupamentos.index'
 import { Route as AuthenticatedEquipamentosIdRouteImport } from './routes/_authenticated/equipamentos.$id'
@@ -33,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedGaleriaRoute = AuthenticatedGaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -41,6 +49,16 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
   id: '/chat',
   path: '/chat',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedBibliotecaRoute = AuthenticatedBibliotecaRouteImport.update({
+  id: '/biblioteca',
+  path: '/biblioteca',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAlcateiaRoute = AuthenticatedAlcateiaRouteImport.update({
+  id: '/alcateia',
+  path: '/alcateia',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedEquipamentosIndexRoute =
@@ -71,8 +89,11 @@ const AuthenticatedAgrupamentosIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/alcateia': typeof AuthenticatedAlcateiaRoute
+  '/biblioteca': typeof AuthenticatedBibliotecaRoute
   '/chat': typeof AuthenticatedChatRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/galeria': typeof AuthenticatedGaleriaRoute
   '/agrupamentos/$id': typeof AuthenticatedAgrupamentosIdRoute
   '/equipamentos/$id': typeof AuthenticatedEquipamentosIdRoute
   '/agrupamentos/': typeof AuthenticatedAgrupamentosIndexRoute
@@ -81,8 +102,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/alcateia': typeof AuthenticatedAlcateiaRoute
+  '/biblioteca': typeof AuthenticatedBibliotecaRoute
   '/chat': typeof AuthenticatedChatRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/galeria': typeof AuthenticatedGaleriaRoute
   '/agrupamentos/$id': typeof AuthenticatedAgrupamentosIdRoute
   '/equipamentos/$id': typeof AuthenticatedEquipamentosIdRoute
   '/agrupamentos': typeof AuthenticatedAgrupamentosIndexRoute
@@ -93,8 +117,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
+  '/_authenticated/alcateia': typeof AuthenticatedAlcateiaRoute
+  '/_authenticated/biblioteca': typeof AuthenticatedBibliotecaRoute
   '/_authenticated/chat': typeof AuthenticatedChatRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/galeria': typeof AuthenticatedGaleriaRoute
   '/_authenticated/agrupamentos/$id': typeof AuthenticatedAgrupamentosIdRoute
   '/_authenticated/equipamentos/$id': typeof AuthenticatedEquipamentosIdRoute
   '/_authenticated/agrupamentos/': typeof AuthenticatedAgrupamentosIndexRoute
@@ -105,8 +132,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/alcateia'
+    | '/biblioteca'
     | '/chat'
     | '/dashboard'
+    | '/galeria'
     | '/agrupamentos/$id'
     | '/equipamentos/$id'
     | '/agrupamentos/'
@@ -115,8 +145,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/alcateia'
+    | '/biblioteca'
     | '/chat'
     | '/dashboard'
+    | '/galeria'
     | '/agrupamentos/$id'
     | '/equipamentos/$id'
     | '/agrupamentos'
@@ -126,8 +159,11 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/login'
+    | '/_authenticated/alcateia'
+    | '/_authenticated/biblioteca'
     | '/_authenticated/chat'
     | '/_authenticated/dashboard'
+    | '/_authenticated/galeria'
     | '/_authenticated/agrupamentos/$id'
     | '/_authenticated/equipamentos/$id'
     | '/_authenticated/agrupamentos/'
@@ -163,6 +199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/galeria': {
+      id: '/_authenticated/galeria'
+      path: '/galeria'
+      fullPath: '/galeria'
+      preLoaderRoute: typeof AuthenticatedGaleriaRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -175,6 +218,20 @@ declare module '@tanstack/react-router' {
       path: '/chat'
       fullPath: '/chat'
       preLoaderRoute: typeof AuthenticatedChatRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/biblioteca': {
+      id: '/_authenticated/biblioteca'
+      path: '/biblioteca'
+      fullPath: '/biblioteca'
+      preLoaderRoute: typeof AuthenticatedBibliotecaRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/alcateia': {
+      id: '/_authenticated/alcateia'
+      path: '/alcateia'
+      fullPath: '/alcateia'
+      preLoaderRoute: typeof AuthenticatedAlcateiaRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/equipamentos/': {
@@ -209,8 +266,11 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAlcateiaRoute: typeof AuthenticatedAlcateiaRoute
+  AuthenticatedBibliotecaRoute: typeof AuthenticatedBibliotecaRoute
   AuthenticatedChatRoute: typeof AuthenticatedChatRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedGaleriaRoute: typeof AuthenticatedGaleriaRoute
   AuthenticatedAgrupamentosIdRoute: typeof AuthenticatedAgrupamentosIdRoute
   AuthenticatedEquipamentosIdRoute: typeof AuthenticatedEquipamentosIdRoute
   AuthenticatedAgrupamentosIndexRoute: typeof AuthenticatedAgrupamentosIndexRoute
@@ -218,8 +278,11 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAlcateiaRoute: AuthenticatedAlcateiaRoute,
+  AuthenticatedBibliotecaRoute: AuthenticatedBibliotecaRoute,
   AuthenticatedChatRoute: AuthenticatedChatRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedGaleriaRoute: AuthenticatedGaleriaRoute,
   AuthenticatedAgrupamentosIdRoute: AuthenticatedAgrupamentosIdRoute,
   AuthenticatedEquipamentosIdRoute: AuthenticatedEquipamentosIdRoute,
   AuthenticatedAgrupamentosIndexRoute: AuthenticatedAgrupamentosIndexRoute,
