@@ -13,6 +13,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAgrupamentosIndexRouteImport } from './routes/_authenticated/agrupamentos.index'
+import { Route as AuthenticatedAgrupamentosIdRouteImport } from './routes/_authenticated/agrupamentos.$id'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -33,16 +35,32 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAgrupamentosIndexRoute =
+  AuthenticatedAgrupamentosIndexRouteImport.update({
+    id: '/agrupamentos/',
+    path: '/agrupamentos/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAgrupamentosIdRoute =
+  AuthenticatedAgrupamentosIdRouteImport.update({
+    id: '/agrupamentos/$id',
+    path: '/agrupamentos/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/agrupamentos/$id': typeof AuthenticatedAgrupamentosIdRoute
+  '/agrupamentos/': typeof AuthenticatedAgrupamentosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/agrupamentos/$id': typeof AuthenticatedAgrupamentosIdRoute
+  '/agrupamentos': typeof AuthenticatedAgrupamentosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,18 +68,27 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/agrupamentos/$id': typeof AuthenticatedAgrupamentosIdRoute
+  '/_authenticated/agrupamentos/': typeof AuthenticatedAgrupamentosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/agrupamentos/$id'
+    | '/agrupamentos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard'
+  to: '/' | '/login' | '/dashboard' | '/agrupamentos/$id' | '/agrupamentos'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/dashboard'
+    | '/_authenticated/agrupamentos/$id'
+    | '/_authenticated/agrupamentos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -100,15 +127,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/agrupamentos/': {
+      id: '/_authenticated/agrupamentos/'
+      path: '/agrupamentos'
+      fullPath: '/agrupamentos/'
+      preLoaderRoute: typeof AuthenticatedAgrupamentosIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/agrupamentos/$id': {
+      id: '/_authenticated/agrupamentos/$id'
+      path: '/agrupamentos/$id'
+      fullPath: '/agrupamentos/$id'
+      preLoaderRoute: typeof AuthenticatedAgrupamentosIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedAgrupamentosIdRoute: typeof AuthenticatedAgrupamentosIdRoute
+  AuthenticatedAgrupamentosIndexRoute: typeof AuthenticatedAgrupamentosIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedAgrupamentosIdRoute: AuthenticatedAgrupamentosIdRoute,
+  AuthenticatedAgrupamentosIndexRoute: AuthenticatedAgrupamentosIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
