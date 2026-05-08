@@ -68,6 +68,22 @@ function Dashboard() {
         <StatCard icon={Shield} label="Membros visíveis" value={stats.membros} />
       </div>
 
+      {/* Atividades */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <AtividadesCard scope="provincial" title="Próximas atividades · Provincial" canCreate={isAdmin} />
+        {profile?.agrupamento_id && (
+          <AtividadesCard
+            scope="agrupamento"
+            agrupamentoId={profile.agrupamento_id}
+            title={`Próximas atividades · ${agName ?? "Agrupamento"}`}
+            canCreate={isAdmin || cargos.some((c) =>
+              c.agrupamento_id === profile.agrupamento_id &&
+              ["responsavel_agrupamento", "adj_responsavel_agrupamento"].includes(c.cargo as string)
+            )}
+          />
+        )}
+      </div>
+
       {/* My cargos */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
