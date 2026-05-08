@@ -60,26 +60,31 @@ export function AtividadesCard({
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <CalendarDays className="h-5 w-5 text-primary" /> {title}
         </h2>
-        {canCreate && (
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" variant="outline"><Plus className="h-4 w-4 mr-1" />Nova</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader><DialogTitle>Nova atividade</DialogTitle></DialogHeader>
-              <div className="space-y-3">
-                <div><Label>Título</Label><Input value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} /></div>
-                <div><Label>Descrição</Label><Textarea value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} /></div>
-                <div><Label>Local</Label><Input value={form.local} onChange={(e) => setForm({ ...form, local: e.target.value })} /></div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label>Início</Label><Input type="datetime-local" value={form.data_inicio} onChange={(e) => setForm({ ...form, data_inicio: e.target.value })} /></div>
-                  <div><Label>Fim (opcional)</Label><Input type="datetime-local" value={form.data_fim} onChange={(e) => setForm({ ...form, data_fim: e.target.value })} /></div>
+        <div className="flex items-center gap-2">
+          {canCreate && (
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" variant="outline"><Plus className="h-4 w-4 mr-1" />Nova</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader><DialogTitle>Nova atividade</DialogTitle></DialogHeader>
+                <div className="space-y-3">
+                  <div><Label>Título</Label><Input value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} /></div>
+                  <div><Label>Descrição</Label><Textarea value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} /></div>
+                  <div><Label>Local</Label><Input value={form.local} onChange={(e) => setForm({ ...form, local: e.target.value })} /></div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div><Label>Início</Label><Input type="datetime-local" value={form.data_inicio} onChange={(e) => setForm({ ...form, data_inicio: e.target.value })} /></div>
+                    <div><Label>Fim (opcional)</Label><Input type="datetime-local" value={form.data_fim} onChange={(e) => setForm({ ...form, data_fim: e.target.value })} /></div>
+                  </div>
                 </div>
-              </div>
-              <DialogFooter><Button onClick={create}>Criar</Button></DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
+                <DialogFooter><Button onClick={create}>Criar</Button></DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )}
+          <Button asChild size="sm" variant="ghost">
+            <Link to="/atividades">Ver todas <ArrowRight className="h-4 w-4 ml-1" /></Link>
+          </Button>
+        </div>
       </div>
       {items.length === 0 ? (
         <p className="text-sm text-muted-foreground">Sem atividades agendadas.</p>
