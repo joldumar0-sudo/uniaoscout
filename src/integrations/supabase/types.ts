@@ -157,6 +157,13 @@ export type Database = {
             referencedRelation: "agrupamentos"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "chat_messages_user_id_profile_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       documents: {
@@ -264,6 +271,13 @@ export type Database = {
             columns: ["agrupamento_id"]
             isOneToOne: false
             referencedRelation: "agrupamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nominations_user_id_profile_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
