@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Boxes, MessageSquare, Library, Image as ImageIcon, PawPrint, Shield } from "lucide-react";
 import { cargoLabel, cargoIcon } from "@/lib/cargos";
+import { AtividadesCard } from "@/components/atividades-card";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({ component: Dashboard });
 
@@ -65,6 +66,22 @@ function Dashboard() {
         <StatCard icon={Users} label="Agrupamentos" value={stats.agrupamentos} />
         <StatCard icon={Boxes} label="Equipamentos" value={stats.equipamentos} />
         <StatCard icon={Shield} label="Membros visíveis" value={stats.membros} />
+      </div>
+
+      {/* Atividades */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <AtividadesCard scope="provincial" title="Próximas atividades · Provincial" canCreate={isAdmin} />
+        {profile?.agrupamento_id && (
+          <AtividadesCard
+            scope="agrupamento"
+            agrupamentoId={profile.agrupamento_id}
+            title={`Próximas atividades · ${agName ?? "Agrupamento"}`}
+            canCreate={isAdmin || cargos.some((c) =>
+              c.agrupamento_id === profile.agrupamento_id &&
+              ["responsavel_agrupamento", "adj_responsavel_agrupamento"].includes(c.cargo as string)
+            )}
+          />
+        )}
       </div>
 
       {/* My cargos */}
