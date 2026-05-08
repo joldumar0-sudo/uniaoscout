@@ -39,7 +39,7 @@ function AgDetail() {
   if (!ag) return <div className="p-8">Carregando...</div>;
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-8 max-w-6xl mx-auto">
       <Link to="/agrupamentos" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
         <ArrowLeft className="h-4 w-4" /> Voltar
       </Link>

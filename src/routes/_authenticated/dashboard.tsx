@@ -37,7 +37,7 @@ function Dashboard() {
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">
           Olá, {profile?.full_name?.split(" ")[0] ?? "membro"}!

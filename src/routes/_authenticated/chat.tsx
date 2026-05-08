@@ -14,7 +14,7 @@ function Chat() {
   const { profile, isAdmin } = useAuth();
   const hasAg = !!profile?.agrupamento_id;
   return (
-    <div className="p-8 max-w-4xl mx-auto h-full flex flex-col">
+    <div className="p-4 sm:p-8 max-w-4xl mx-auto h-full flex flex-col">
       <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
         <MessageSquare className="h-7 w-7 text-primary" /> Chat
       </h1>

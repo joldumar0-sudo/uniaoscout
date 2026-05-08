@@ -47,7 +47,7 @@ function Audit() {
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-8 max-w-5xl mx-auto">
       <div className="flex items-center gap-3 mb-2">
         <ShieldAlert className="h-8 w-8 text-primary" />
         <h1 className="text-3xl font-bold">Auditoria</h1>
