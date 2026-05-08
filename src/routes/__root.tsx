@@ -4,7 +4,6 @@ import {
 } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
-import { ThemeProvider } from "@/lib/theme";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -49,7 +48,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Escoteiros Católicos de Moçambique" },
-      { name: "description", content: "Sistema de gestão dos Escoteiros Católicos de Moçambique" },
+      { name: "description", content: "Escoteiros Católicos de Moçambique de escoteiro para escoteiros unidos coloque o icone como fundo" },
+      { property: "og:title", content: "Escoteiros Católicos de Moçambique" },
+      { name: "twitter:title", content: "Escoteiros Católicos de Moçambique" },
+      { property: "og:description", content: "Escoteiros Católicos de Moçambique de escoteiro para escoteiros unidos coloque o icone como fundo" },
+      { name: "twitter:description", content: "Escoteiros Católicos de Moçambique de escoteiro para escoteiros unidos coloque o icone como fundo" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/589827e4-16f2-4304-b7a3-937f99b85f24" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/589827e4-16f2-4304-b7a3-937f99b85f24" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
@@ -72,12 +79,10 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <Outlet />
-          <Toaster richColors position="top-right" />
-        </AuthProvider>
-      </ThemeProvider>
+      <AuthProvider>
+        <Outlet />
+        <Toaster richColors position="top-right" />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
