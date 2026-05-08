@@ -123,6 +123,21 @@ function Membros() {
       </div>
 
       <Card className="p-6 mb-6">
+        <h2 className="font-semibold mb-3">Agrupamentos · Nome & Paróquia ({ags.length})</h2>
+        <div className="space-y-2 max-h-96 overflow-y-auto">
+          {ags.map((a) => (
+            <div key={a.id} className="grid grid-cols-12 gap-2 items-center p-2 rounded border">
+              <div className="col-span-1 font-mono text-sm">{String(a.numero).padStart(2, "0")}</div>
+              <Input className="col-span-5" defaultValue={a.nome} placeholder="Nome do agrupamento"
+                onBlur={(e) => e.target.value !== a.nome && updateAg(a.id, { nome: e.target.value })} />
+              <Input className="col-span-6" defaultValue={a.paroquia ?? ""} placeholder="Paróquia"
+                onBlur={(e) => e.target.value !== (a.paroquia ?? "") && updateAg(a.id, { paroquia: e.target.value })} />
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card className="p-6 mb-6">
         <h2 className="font-semibold mb-3">Membros ({profiles.length})</h2>
         <div className="space-y-2">
           {profiles.map((p) => (
