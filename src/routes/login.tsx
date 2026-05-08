@@ -62,10 +62,19 @@ function LoginPage() {
 
         <form onSubmit={onSubmit} className="space-y-4">
           {mode === "signup" && (
-            <div className="space-y-2">
-              <Label htmlFor="name">Nome completo</Label>
-              <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-            </div>
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome completo</Label>
+                <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ag">Nº do Agrupamento (01–100)</Label>
+                <Input id="ag" type="number" min={1} max={100} value={agrupamentoNumero}
+                  onChange={(e) => setAgrupamentoNumero(e.target.value)}
+                  placeholder="ex: 12" required />
+                <p className="text-[11px] text-muted-foreground">A paróquia será associada automaticamente.</p>
+              </div>
+            </>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
