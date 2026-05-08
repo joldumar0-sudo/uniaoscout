@@ -13,7 +13,10 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
+import { Route as AuthenticatedEquipamentosIndexRouteImport } from './routes/_authenticated/equipamentos.index'
 import { Route as AuthenticatedAgrupamentosIndexRouteImport } from './routes/_authenticated/agrupamentos.index'
+import { Route as AuthenticatedEquipamentosIdRouteImport } from './routes/_authenticated/equipamentos.$id'
 import { Route as AuthenticatedAgrupamentosIdRouteImport } from './routes/_authenticated/agrupamentos.$id'
 
 const LoginRoute = LoginRouteImport.update({
@@ -35,10 +38,27 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedEquipamentosIndexRoute =
+  AuthenticatedEquipamentosIndexRouteImport.update({
+    id: '/equipamentos/',
+    path: '/equipamentos/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAgrupamentosIndexRoute =
   AuthenticatedAgrupamentosIndexRouteImport.update({
     id: '/agrupamentos/',
     path: '/agrupamentos/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedEquipamentosIdRoute =
+  AuthenticatedEquipamentosIdRouteImport.update({
+    id: '/equipamentos/$id',
+    path: '/equipamentos/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAgrupamentosIdRoute =
@@ -51,44 +71,67 @@ const AuthenticatedAgrupamentosIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/chat': typeof AuthenticatedChatRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/agrupamentos/$id': typeof AuthenticatedAgrupamentosIdRoute
+  '/equipamentos/$id': typeof AuthenticatedEquipamentosIdRoute
   '/agrupamentos/': typeof AuthenticatedAgrupamentosIndexRoute
+  '/equipamentos/': typeof AuthenticatedEquipamentosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/chat': typeof AuthenticatedChatRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/agrupamentos/$id': typeof AuthenticatedAgrupamentosIdRoute
+  '/equipamentos/$id': typeof AuthenticatedEquipamentosIdRoute
   '/agrupamentos': typeof AuthenticatedAgrupamentosIndexRoute
+  '/equipamentos': typeof AuthenticatedEquipamentosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
+  '/_authenticated/chat': typeof AuthenticatedChatRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/agrupamentos/$id': typeof AuthenticatedAgrupamentosIdRoute
+  '/_authenticated/equipamentos/$id': typeof AuthenticatedEquipamentosIdRoute
   '/_authenticated/agrupamentos/': typeof AuthenticatedAgrupamentosIndexRoute
+  '/_authenticated/equipamentos/': typeof AuthenticatedEquipamentosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/login'
+    | '/chat'
     | '/dashboard'
     | '/agrupamentos/$id'
+    | '/equipamentos/$id'
     | '/agrupamentos/'
+    | '/equipamentos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard' | '/agrupamentos/$id' | '/agrupamentos'
+  to:
+    | '/'
+    | '/login'
+    | '/chat'
+    | '/dashboard'
+    | '/agrupamentos/$id'
+    | '/equipamentos/$id'
+    | '/agrupamentos'
+    | '/equipamentos'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/login'
+    | '/_authenticated/chat'
     | '/_authenticated/dashboard'
     | '/_authenticated/agrupamentos/$id'
+    | '/_authenticated/equipamentos/$id'
     | '/_authenticated/agrupamentos/'
+    | '/_authenticated/equipamentos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -127,11 +170,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/chat': {
+      id: '/_authenticated/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof AuthenticatedChatRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/equipamentos/': {
+      id: '/_authenticated/equipamentos/'
+      path: '/equipamentos'
+      fullPath: '/equipamentos/'
+      preLoaderRoute: typeof AuthenticatedEquipamentosIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/agrupamentos/': {
       id: '/_authenticated/agrupamentos/'
       path: '/agrupamentos'
       fullPath: '/agrupamentos/'
       preLoaderRoute: typeof AuthenticatedAgrupamentosIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/equipamentos/$id': {
+      id: '/_authenticated/equipamentos/$id'
+      path: '/equipamentos/$id'
+      fullPath: '/equipamentos/$id'
+      preLoaderRoute: typeof AuthenticatedEquipamentosIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/agrupamentos/$id': {
@@ -145,15 +209,21 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedChatRoute: typeof AuthenticatedChatRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedAgrupamentosIdRoute: typeof AuthenticatedAgrupamentosIdRoute
+  AuthenticatedEquipamentosIdRoute: typeof AuthenticatedEquipamentosIdRoute
   AuthenticatedAgrupamentosIndexRoute: typeof AuthenticatedAgrupamentosIndexRoute
+  AuthenticatedEquipamentosIndexRoute: typeof AuthenticatedEquipamentosIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedChatRoute: AuthenticatedChatRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedAgrupamentosIdRoute: AuthenticatedAgrupamentosIdRoute,
+  AuthenticatedEquipamentosIdRoute: AuthenticatedEquipamentosIdRoute,
   AuthenticatedAgrupamentosIndexRoute: AuthenticatedAgrupamentosIndexRoute,
+  AuthenticatedEquipamentosIndexRoute: AuthenticatedEquipamentosIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
