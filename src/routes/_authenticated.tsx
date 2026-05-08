@@ -115,11 +115,18 @@ function AuthLayout() {
           )}
         </nav>
 
-        <div className="border-t border-sidebar-border p-3">
-          <div className="text-xs text-sidebar-foreground/70 mb-2 truncate">
+        <div className="border-t border-sidebar-border p-3 space-y-2">
+          <div className="text-xs text-sidebar-foreground/70 truncate">
             {profile?.full_name ?? profile?.email}
             {isAdmin && <span className="ml-1 px-1.5 py-0.5 rounded bg-sidebar-primary text-sidebar-primary-foreground text-[9px]">ADMIN</span>}
           </div>
+          {permission !== "granted" && permission !== "unsupported" && (
+            <Button onClick={requestPermission} variant="ghost" size="sm"
+              className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent">
+              {permission === "denied" ? <BellOff className="h-4 w-4 mr-2" /> : <Bell className="h-4 w-4 mr-2" />}
+              {permission === "denied" ? "Notificações bloqueadas" : "Ativar notificações"}
+            </Button>
+          )}
           <Button onClick={logout} variant="ghost" size="sm"
             className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent">
             <LogOut className="h-4 w-4 mr-2" /> Sair
