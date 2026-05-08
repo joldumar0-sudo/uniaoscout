@@ -14,16 +14,399 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      agrupamentos: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          numero: number
+          paroquia: string | null
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          numero: number
+          paroquia?: string | null
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          numero?: number
+          paroquia?: string | null
+        }
+        Relationships: []
+      }
+      alcateia_posts: {
+        Row: {
+          agrupamento_id: string | null
+          conteudo: string
+          created_at: string
+          created_by: string | null
+          id: string
+          tipo: string
+          titulo: string
+        }
+        Insert: {
+          agrupamento_id?: string | null
+          conteudo: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          tipo: string
+          titulo: string
+        }
+        Update: {
+          agrupamento_id?: string | null
+          conteudo?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          tipo?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alcateia_posts_agrupamento_id_fkey"
+            columns: ["agrupamento_id"]
+            isOneToOne: false
+            referencedRelation: "agrupamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_divergences: {
+        Row: {
+          agrupamento_id: string | null
+          created_at: string
+          created_by: string | null
+          descricao: string
+          equipamento_id: string | null
+          id: string
+          status: string
+        }
+        Insert: {
+          agrupamento_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          descricao: string
+          equipamento_id?: string | null
+          id?: string
+          status?: string
+        }
+        Update: {
+          agrupamento_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          descricao?: string
+          equipamento_id?: string | null
+          id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_divergences_agrupamento_id_fkey"
+            columns: ["agrupamento_id"]
+            isOneToOne: false
+            referencedRelation: "agrupamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_divergences_equipamento_id_fkey"
+            columns: ["equipamento_id"]
+            isOneToOne: false
+            referencedRelation: "equipamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_messages: {
+        Row: {
+          agrupamento_id: string | null
+          content: string
+          created_at: string
+          id: string
+          scope: string
+          user_id: string
+        }
+        Insert: {
+          agrupamento_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          scope?: string
+          user_id: string
+        }
+        Update: {
+          agrupamento_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          scope?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_agrupamento_id_fkey"
+            columns: ["agrupamento_id"]
+            isOneToOne: false
+            referencedRelation: "agrupamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          agrupamento_id: string
+          created_at: string
+          file_name: string
+          file_path: string
+          id: string
+          mime_type: string | null
+          size_bytes: number | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          agrupamento_id: string
+          created_at?: string
+          file_name: string
+          file_path: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          agrupamento_id?: string
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_agrupamento_id_fkey"
+            columns: ["agrupamento_id"]
+            isOneToOne: false
+            referencedRelation: "agrupamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      equipamentos: {
+        Row: {
+          conteudo: string
+          created_at: string
+          created_by: string | null
+          id: string
+          numero: number
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          conteudo?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          numero: number
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          conteudo?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          numero?: number
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      nominations: {
+        Row: {
+          agrupamento_id: string | null
+          cargo: Database["public"]["Enums"]["cargo"]
+          id: string
+          nominated_at: string
+          nominated_by: string | null
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          agrupamento_id?: string | null
+          cargo: Database["public"]["Enums"]["cargo"]
+          id?: string
+          nominated_at?: string
+          nominated_by?: string | null
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          agrupamento_id?: string | null
+          cargo?: Database["public"]["Enums"]["cargo"]
+          id?: string
+          nominated_at?: string
+          nominated_by?: string | null
+          notes?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nominations_agrupamento_id_fkey"
+            columns: ["agrupamento_id"]
+            isOneToOne: false
+            referencedRelation: "agrupamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      photos: {
+        Row: {
+          agrupamento_id: string
+          caption: string | null
+          created_at: string
+          file_path: string
+          id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          agrupamento_id: string
+          caption?: string | null
+          created_at?: string
+          file_path: string
+          id?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          agrupamento_id?: string
+          caption?: string | null
+          created_at?: string
+          file_path?: string
+          id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photos_agrupamento_id_fkey"
+            columns: ["agrupamento_id"]
+            isOneToOne: false
+            referencedRelation: "agrupamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          agrupamento_id: string | null
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          agrupamento_id?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          agrupamento_id?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_agrupamento_id_fkey"
+            columns: ["agrupamento_id"]
+            isOneToOne: false
+            referencedRelation: "agrupamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_manage_agrupamento: {
+        Args: { _ag_id: string; _user_id: string }
+        Returns: boolean
+      }
+      can_view_agrupamento: {
+        Args: { _ag_id: string; _user_id: string }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_provincial_admin: { Args: { _user_id: string }; Returns: boolean }
+      user_agrupamento_id: { Args: { _user_id: string }; Returns: string }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "member"
+      cargo:
+        | "padre"
+        | "coord_provincial"
+        | "adj_coord_provincial"
+        | "secretaria_provincial"
+        | "tesoureiro_provincial"
+        | "chefe_campo_provincial"
+        | "balu_provincial"
+        | "akela_provincial"
+        | "pai_provincial"
+        | "mae_provincial"
+        | "conselheiro_provincial"
+        | "responsavel_agrupamento"
+        | "adj_responsavel_agrupamento"
+        | "secretaria_agrupamento"
+        | "tesoureiro_agrupamento"
+        | "chefe_campo_agrupamento"
+        | "balu_agrupamento"
+        | "akela_agrupamento"
+        | "assistente_agrupamento"
+        | "pai_agrupamento"
+        | "mae_agrupamento"
+        | "conselheiro_agrupamento"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +533,32 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "member"],
+      cargo: [
+        "padre",
+        "coord_provincial",
+        "adj_coord_provincial",
+        "secretaria_provincial",
+        "tesoureiro_provincial",
+        "chefe_campo_provincial",
+        "balu_provincial",
+        "akela_provincial",
+        "pai_provincial",
+        "mae_provincial",
+        "conselheiro_provincial",
+        "responsavel_agrupamento",
+        "adj_responsavel_agrupamento",
+        "secretaria_agrupamento",
+        "tesoureiro_agrupamento",
+        "chefe_campo_agrupamento",
+        "balu_agrupamento",
+        "akela_agrupamento",
+        "assistente_agrupamento",
+        "pai_agrupamento",
+        "mae_agrupamento",
+        "conselheiro_agrupamento",
+      ],
+    },
   },
 } as const
