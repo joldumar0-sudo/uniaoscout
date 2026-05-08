@@ -1,15 +1,22 @@
 import { createFileRoute, Outlet, Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
+import { ChatNotificationsProvider, useChatNotifications } from "@/lib/chat-notifications";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, Boxes, MessageSquare, Library, Image as ImageIcon,
-  PawPrint, ShieldAlert, LogOut, Tent, Loader2, UserCog
+  PawPrint, ShieldAlert, LogOut, Tent, Loader2, UserCog, Bell, BellOff
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 
-export const Route = createFileRoute("/_authenticated")({ component: AuthLayout });
+export const Route = createFileRoute("/_authenticated")({
+  component: () => (
+    <ChatNotificationsProvider>
+      <AuthLayout />
+    </ChatNotificationsProvider>
+  ),
+});
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
