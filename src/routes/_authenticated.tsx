@@ -69,6 +69,7 @@ function AuthLayout() {
           {NAV.map((n) => {
             const active = loc.pathname.startsWith(n.to);
             const Icon = n.icon;
+            const badge = n.to === "/chat" ? unread : 0;
             return (
               <Link key={n.to} to={n.to}
                 className={cn(
@@ -78,7 +79,12 @@ function AuthLayout() {
                     : "hover:bg-sidebar-accent text-sidebar-foreground/90"
                 )}>
                 <Icon className="h-4 w-4" />
-                {n.label}
+                <span className="flex-1">{n.label}</span>
+                {badge > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold">
+                    {badge > 99 ? "99+" : badge}
+                  </span>
+                )}
               </Link>
             );
           })}
