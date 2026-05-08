@@ -1,15 +1,22 @@
 import { createFileRoute, Outlet, Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
+import { ChatNotificationsProvider, useChatNotifications } from "@/lib/chat-notifications";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, Boxes, MessageSquare, Library, Image as ImageIcon,
-  PawPrint, ShieldAlert, LogOut, Tent, Loader2, UserCog
+  PawPrint, ShieldAlert, LogOut, Tent, Loader2, UserCog, Bell, BellOff
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 
-export const Route = createFileRoute("/_authenticated")({ component: AuthLayout });
+export const Route = createFileRoute("/_authenticated")({
+  component: () => (
+    <ChatNotificationsProvider>
+      <AuthLayout />
+    </ChatNotificationsProvider>
+  ),
+});
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -23,6 +30,7 @@ const NAV = [
 
 function AuthLayout() {
   const { loading, session, profile, isAdmin } = useAuth();
+  const { unread, permission, requestPermission } = useChatNotifications();
   const nav = useNavigate();
   const loc = useLocation();
 
@@ -62,6 +70,7 @@ function AuthLayout() {
           {NAV.map((n) => {
             const active = loc.pathname.startsWith(n.to);
             const Icon = n.icon;
+            const badge = n.to === "/chat" ? unread : 0;
             return (
               <Link key={n.to} to={n.to}
                 className={cn(
@@ -71,7 +80,12 @@ function AuthLayout() {
                     : "hover:bg-sidebar-accent text-sidebar-foreground/90"
                 )}>
                 <Icon className="h-4 w-4" />
-                {n.label}
+                <span className="flex-1">{n.label}</span>
+                {badge > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold">
+                    {badge > 99 ? "99+" : badge}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -101,11 +115,18 @@ function AuthLayout() {
           )}
         </nav>
 
-        <div className="border-t border-sidebar-border p-3">
-          <div className="text-xs text-sidebar-foreground/70 mb-2 truncate">
+        <div className="border-t border-sidebar-border p-3 space-y-2">
+          <div className="text-xs text-sidebar-foreground/70 truncate">
             {profile?.full_name ?? profile?.email}
             {isAdmin && <span className="ml-1 px-1.5 py-0.5 rounded bg-sidebar-primary text-sidebar-primary-foreground text-[9px]">ADMIN</span>}
           </div>
+          {permission !== "granted" && permission !== "unsupported" && (
+            <Button onClick={requestPermission} variant="ghost" size="sm"
+              className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent">
+              {permission === "denied" ? <BellOff className="h-4 w-4 mr-2" /> : <Bell className="h-4 w-4 mr-2" />}
+              {permission === "denied" ? "Notificações bloqueadas" : "Ativar notificações"}
+            </Button>
+          )}
           <Button onClick={logout} variant="ghost" size="sm"
             className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent">
             <LogOut className="h-4 w-4 mr-2" /> Sair
