@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Boxes, MessageSquare, Library, Image as ImageIcon, PawPrint, Shield } from "lucide-react";
 import { cargoLabel, cargoIcon } from "@/lib/cargos";
+import { AtividadesCard } from "@/components/atividades-card";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({ component: Dashboard });
 
