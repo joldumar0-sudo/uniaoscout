@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import logo from "@/assets/logo-ecm.png";
+import loginBg from "@/assets/login-bg.jpeg";
 import { APP_VERSION, APP_DEVELOPER } from "@/lib/theme";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
@@ -51,9 +52,13 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4"
-      style={{ background: "var(--gradient-hero)" }}>
-      <Card className="w-full max-w-md p-8 shadow-2xl">
+    <div className="min-h-screen flex items-center justify-center px-4 relative"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)), url(${loginBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}>
+      <Card className="w-full max-w-md p-8 shadow-2xl bg-card/95 backdrop-blur-sm relative z-10">
         <div className="flex flex-col items-center mb-6">
           <img src={logo} alt="ECM" className="h-20 w-20 rounded-full object-cover mb-3 shadow-md" />
           <h1 className="text-xl font-bold text-center uppercase tracking-wide">Escoteiros Católicos</h1>

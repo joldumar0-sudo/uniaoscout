@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import logo from "@/assets/logo-ecm.png";
+import titleBg from "@/assets/title-bg.jpeg";
 import { APP_VERSION } from "@/lib/theme";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -56,12 +57,19 @@ function AuthLayout() {
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col shrink-0 border-r border-sidebar-border">
-        <div className="px-5 py-5 border-b border-sidebar-border">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="ECM" className="h-11 w-11 rounded-md object-cover shrink-0" />
+        <div
+          className="px-5 py-5 border-b border-sidebar-border relative overflow-hidden"
+          style={{
+            backgroundImage: `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)), url(${titleBg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="flex items-center gap-3 relative z-10">
+            <img src={logo} alt="ECM" className="h-11 w-11 rounded-md object-cover shrink-0 ring-2 ring-white/30" />
             <div className="min-w-0">
-              <div className="text-[11px] font-bold leading-tight uppercase tracking-wide">Escoteiros Católicos</div>
-              <div className="text-[10px] text-sidebar-foreground/70 leading-tight">de Moçambique</div>
+              <div className="text-[11px] font-bold leading-tight uppercase tracking-wide text-white">Escoteiros Católicos</div>
+              <div className="text-[10px] text-white/80 leading-tight">de Moçambique</div>
             </div>
           </div>
         </div>
