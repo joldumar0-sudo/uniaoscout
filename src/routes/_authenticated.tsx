@@ -5,10 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, Boxes, MessageSquare, Library, Image as ImageIcon,
-  PawPrint, ShieldAlert, LogOut, Tent, Loader2, UserCog, Bell, BellOff
+  PawPrint, ShieldAlert, LogOut, Loader2, UserCog, Bell, BellOff, Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
+import logo from "@/assets/logo-ecm.png";
+import { APP_VERSION } from "@/lib/theme";
 
 export const Route = createFileRoute("/_authenticated")({
   component: () => (
@@ -55,13 +57,11 @@ function AuthLayout() {
     <div className="flex min-h-screen bg-background">
       <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col shrink-0 border-r border-sidebar-border">
         <div className="px-5 py-5 border-b border-sidebar-border">
-          <div className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-md bg-sidebar-primary flex items-center justify-center">
-              <Tent className="h-5 w-5 text-sidebar-primary-foreground" />
-            </div>
-            <div>
-              <div className="text-sm font-bold leading-tight">ECMOZ</div>
-              <div className="text-[10px] text-sidebar-foreground/70 leading-tight">Escoteiros Católicos</div>
+          <div className="flex items-center gap-3">
+            <img src={logo} alt="ECM" className="h-11 w-11 rounded-md object-cover shrink-0" />
+            <div className="min-w-0">
+              <div className="text-[11px] font-bold leading-tight uppercase tracking-wide">Escoteiros Católicos</div>
+              <div className="text-[10px] text-sidebar-foreground/70 leading-tight">de Moçambique</div>
             </div>
           </div>
         </div>
@@ -127,10 +127,21 @@ function AuthLayout() {
               {permission === "denied" ? "Notificações bloqueadas" : "Ativar notificações"}
             </Button>
           )}
+          <Link to="/configuracoes" className={cn(
+            "flex items-center gap-2 px-2 py-1.5 rounded-md text-sm",
+            loc.pathname.startsWith("/configuracoes")
+              ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium"
+              : "hover:bg-sidebar-accent text-sidebar-foreground/90"
+          )}>
+            <Settings className="h-4 w-4" /> Definições
+          </Link>
           <Button onClick={logout} variant="ghost" size="sm"
             className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent">
             <LogOut className="h-4 w-4 mr-2" /> Sair
           </Button>
+          <div className="text-[10px] text-sidebar-foreground/50 text-center pt-1">
+            v{APP_VERSION} · OLDUMAR JULIO
+          </div>
         </div>
       </aside>
 

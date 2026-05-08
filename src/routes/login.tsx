@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Tent, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import logo from "@/assets/logo-ecm.png";
+import { APP_VERSION, APP_DEVELOPER } from "@/lib/theme";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
@@ -53,10 +55,8 @@ function LoginPage() {
       style={{ background: "var(--gradient-hero)" }}>
       <Card className="w-full max-w-md p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-6">
-          <div className="h-16 w-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-3">
-            <Tent className="h-8 w-8" />
-          </div>
-          <h1 className="text-2xl font-bold text-center">Escoteiros Católicos</h1>
+          <img src={logo} alt="ECM" className="h-20 w-20 rounded-full object-cover mb-3 shadow-md" />
+          <h1 className="text-xl font-bold text-center uppercase tracking-wide">Escoteiros Católicos</h1>
           <p className="text-sm text-muted-foreground">de Moçambique</p>
         </div>
 
@@ -106,6 +106,10 @@ function LoginPage() {
         <Link to="/" className="block text-center text-xs text-muted-foreground mt-4 hover:underline">
           Voltar
         </Link>
+        <div className="mt-6 pt-4 border-t text-center text-[10px] text-muted-foreground space-y-0.5">
+          <div>v{APP_VERSION} · Desenvolvido por {APP_DEVELOPER.name}</div>
+          <div>{APP_DEVELOPER.email} · +258 {APP_DEVELOPER.contact}</div>
+        </div>
       </Card>
     </div>
   );
