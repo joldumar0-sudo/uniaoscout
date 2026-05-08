@@ -79,6 +79,56 @@ export type Database = {
           },
         ]
       }
+      atividades: {
+        Row: {
+          agrupamento_id: string | null
+          created_at: string
+          created_by: string | null
+          data_fim: string | null
+          data_inicio: string
+          descricao: string | null
+          id: string
+          local: string | null
+          scope: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          agrupamento_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          data_fim?: string | null
+          data_inicio: string
+          descricao?: string | null
+          id?: string
+          local?: string | null
+          scope: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          agrupamento_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          data_fim?: string | null
+          data_inicio?: string
+          descricao?: string | null
+          id?: string
+          local?: string | null
+          scope?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atividades_agrupamento_id_fkey"
+            columns: ["agrupamento_id"]
+            isOneToOne: false
+            referencedRelation: "agrupamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_divergences: {
         Row: {
           agrupamento_id: string | null
