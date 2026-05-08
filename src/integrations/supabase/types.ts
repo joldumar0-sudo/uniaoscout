@@ -218,7 +218,7 @@ export type Database = {
       }
       documents: {
         Row: {
-          agrupamento_id: string
+          agrupamento_id: string | null
           created_at: string
           file_name: string
           file_path: string
@@ -228,7 +228,7 @@ export type Database = {
           uploaded_by: string | null
         }
         Insert: {
-          agrupamento_id: string
+          agrupamento_id?: string | null
           created_at?: string
           file_name: string
           file_path: string
@@ -238,7 +238,7 @@ export type Database = {
           uploaded_by?: string | null
         }
         Update: {
-          agrupamento_id?: string
+          agrupamento_id?: string | null
           created_at?: string
           file_name?: string
           file_path?: string
@@ -334,7 +334,7 @@ export type Database = {
       }
       photos: {
         Row: {
-          agrupamento_id: string
+          agrupamento_id: string | null
           caption: string | null
           created_at: string
           file_path: string
@@ -342,7 +342,7 @@ export type Database = {
           uploaded_by: string | null
         }
         Insert: {
-          agrupamento_id: string
+          agrupamento_id?: string | null
           caption?: string | null
           created_at?: string
           file_path: string
@@ -350,7 +350,7 @@ export type Database = {
           uploaded_by?: string | null
         }
         Update: {
-          agrupamento_id?: string
+          agrupamento_id?: string | null
           caption?: string | null
           created_at?: string
           file_path?: string
@@ -429,6 +429,10 @@ export type Database = {
     }
     Functions: {
       can_manage_agrupamento: {
+        Args: { _ag_id: string; _user_id: string }
+        Returns: boolean
+      }
+      can_upload_media: {
         Args: { _ag_id: string; _user_id: string }
         Returns: boolean
       }
