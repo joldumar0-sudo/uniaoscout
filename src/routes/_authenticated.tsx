@@ -30,6 +30,7 @@ const NAV = [
 
 function AuthLayout() {
   const { loading, session, profile, isAdmin } = useAuth();
+  const { unread, permission, requestPermission } = useChatNotifications();
   const nav = useNavigate();
   const loc = useLocation();
 
