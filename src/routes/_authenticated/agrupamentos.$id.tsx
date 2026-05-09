@@ -164,33 +164,39 @@ function MembrosTab({ agrupamentoId, canManage, readonlyParoquial }: { agrupamen
         )}
       </div>
 
-      {noms.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Nenhum cargo atribuído neste agrupamento.</p>
-      ) : (
-        <div className="space-y-2">
-          {noms.map((n: any) => {
-            const Icon = cargoIcon(n.cargo);
-            return (
-              <div key={n.id} className="flex items-center justify-between p-3 rounded-md border bg-card">
-                <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center">
-                    <Icon className="h-5 w-5" />
+      {(() => {
+        const visible = readonlyParoquial
+          ? noms.filter((n: any) => CARGO_MAP[n.cargo as Cargo]?.grupo === "gestao")
+          : noms;
+        if (visible.length === 0) {
+          return <p className="text-sm text-muted-foreground">Nenhum cargo {readonlyParoquial ? "paroquial" : ""} atribuído.</p>;
+        }
+        return (
+          <div className="space-y-2">
+            {visible.map((n: any) => {
+              const Icon = cargoIcon(n.cargo);
+              return (
+                <div key={n.id} className="flex items-center justify-between p-3 rounded-md border bg-card">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="font-medium">{n.profiles?.full_name ?? n.profiles?.email ?? "—"}</div>
+                      <div className="text-xs text-muted-foreground">{cargoLabel(n.cargo)}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-medium">{n.profiles?.full_name ?? n.profiles?.email ?? "—"}</div>
-                    <div className="text-xs text-muted-foreground">{cargoLabel(n.cargo)}</div>
-                  </div>
+                  {canManage && (
+                    <Button variant="ghost" size="icon" onClick={() => remover(n.id)}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  )}
                 </div>
-                {canManage && (
-                  <Button variant="ghost" size="icon" onClick={() => remover(n.id)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        );
+      })()}
     </Card>
   );
 }
