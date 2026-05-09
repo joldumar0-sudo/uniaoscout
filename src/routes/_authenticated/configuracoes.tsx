@@ -54,6 +54,51 @@ function Page() {
       </Card>
 
       <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <BellRing className="h-5 w-5 text-primary" /> Notificações
+          </h2>
+          {unread > 0 && (
+            <span className="text-xs rounded-full bg-primary text-primary-foreground px-2 py-0.5">
+              {unread} nova{unread === 1 ? "" : "s"}
+            </span>
+          )}
+        </div>
+        <div className="space-y-3 text-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <div className="font-medium">Notificações do navegador</div>
+              <div className="text-xs text-muted-foreground">
+                Estado: {permission === "granted" ? "Activadas" : permission === "denied" ? "Bloqueadas" : permission === "unsupported" ? "Não suportado" : "Por activar"}
+              </div>
+            </div>
+            {permission === "granted" ? (
+              <Button variant="outline" disabled className="gap-2"><Bell className="h-4 w-4" /> Activadas</Button>
+            ) : permission === "denied" ? (
+              <Button variant="outline" disabled className="gap-2"><BellOff className="h-4 w-4" /> Bloqueadas</Button>
+            ) : permission === "unsupported" ? (
+              <Button variant="outline" disabled>Indisponível</Button>
+            ) : (
+              <Button onClick={askPerm} className="gap-2"><Bell className="h-4 w-4" /> Activar</Button>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t">
+            <div className="rounded-md bg-muted p-3">
+              <div className="text-xs text-muted-foreground">Provincial</div>
+              <div className="text-lg font-semibold">{unreadProvincial}</div>
+            </div>
+            <div className="rounded-md bg-muted p-3">
+              <div className="text-xs text-muted-foreground">Agrupamento</div>
+              <div className="text-lg font-semibold">{unreadAgrupamento}</div>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            As mensagens do chat chegam em tempo real, mesmo com esta página aberta.
+          </p>
+        </div>
+      </Card>
+
+      <Card className="p-6">
         <h2 className="text-lg font-semibold mb-4">Sobre o aplicativo</h2>
         <dl className="text-sm space-y-2">
           <div className="flex justify-between"><dt className="text-muted-foreground">Versão</dt><dd className="font-medium">{APP_VERSION}</dd></div>
