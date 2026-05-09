@@ -2,18 +2,30 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTheme, APP_VERSION, APP_DEVELOPER, type ThemeMode } from "@/lib/theme";
-import { Sun, Moon, Monitor, Mail, Phone, User } from "lucide-react";
+import { useChatNotifications } from "@/lib/chat-notifications";
+import { Sun, Moon, Monitor, Mail, Phone, User, Bell, BellOff, BellRing } from "lucide-react";
+import { toast } from "sonner";
 import logo from "@/assets/logo-ecm.png";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({ component: Page });
 
 function Page() {
   const { mode, setMode } = useTheme();
+  const { permission, requestPermission, unread, unreadProvincial, unreadAgrupamento } = useChatNotifications();
   const opts: { v: ThemeMode; label: string; Icon: any }[] = [
     { v: "light", label: "Claro", Icon: Sun },
     { v: "dark", label: "Escuro", Icon: Moon },
     { v: "auto", label: "Automático", Icon: Monitor },
   ];
+
+  const askPerm = async () => {
+    await requestPermission();
+    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+      toast.success("Notificações activadas em tempo real");
+    } else {
+      toast.error("Permissão de notificações negada");
+    }
+  };
 
   return (
     <div className="p-4 sm:p-8 max-w-3xl mx-auto space-y-6">
@@ -39,6 +51,51 @@ function Page() {
         <p className="text-xs text-muted-foreground mt-3">
           O modo automático segue as preferências do sistema.
         </p>
+      </Card>
+
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <BellRing className="h-5 w-5 text-primary" /> Notificações
+          </h2>
+          {unread > 0 && (
+            <span className="text-xs rounded-full bg-primary text-primary-foreground px-2 py-0.5">
+              {unread} nova{unread === 1 ? "" : "s"}
+            </span>
+          )}
+        </div>
+        <div className="space-y-3 text-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <div className="font-medium">Notificações do navegador</div>
+              <div className="text-xs text-muted-foreground">
+                Estado: {permission === "granted" ? "Activadas" : permission === "denied" ? "Bloqueadas" : permission === "unsupported" ? "Não suportado" : "Por activar"}
+              </div>
+            </div>
+            {permission === "granted" ? (
+              <Button variant="outline" disabled className="gap-2"><Bell className="h-4 w-4" /> Activadas</Button>
+            ) : permission === "denied" ? (
+              <Button variant="outline" disabled className="gap-2"><BellOff className="h-4 w-4" /> Bloqueadas</Button>
+            ) : permission === "unsupported" ? (
+              <Button variant="outline" disabled>Indisponível</Button>
+            ) : (
+              <Button onClick={askPerm} className="gap-2"><Bell className="h-4 w-4" /> Activar</Button>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t">
+            <div className="rounded-md bg-muted p-3">
+              <div className="text-xs text-muted-foreground">Provincial</div>
+              <div className="text-lg font-semibold">{unreadProvincial}</div>
+            </div>
+            <div className="rounded-md bg-muted p-3">
+              <div className="text-xs text-muted-foreground">Agrupamento</div>
+              <div className="text-lg font-semibold">{unreadAgrupamento}</div>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            As mensagens do chat chegam em tempo real, mesmo com esta página aberta.
+          </p>
+        </div>
       </Card>
 
       <Card className="p-6">
