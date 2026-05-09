@@ -24,7 +24,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = () => { if ((localStorage.getItem(KEY) ?? "auto") === "auto") apply("auto"); };
     mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === KEY) {
+        const next = (e.newValue as ThemeMode | null) ?? "auto";
+        setModeState(next);
+        apply(next);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => {
+      mq.removeEventListener("change", onChange);
+      window.removeEventListener("storage", onStorage);
+    };
   }, []);
 
   const setMode = (m: ThemeMode) => {
