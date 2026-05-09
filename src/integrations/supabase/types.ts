@@ -177,7 +177,10 @@ export type Database = {
       chat_messages: {
         Row: {
           agrupamento_id: string | null
-          content: string
+          attachment_name: string | null
+          attachment_type: string | null
+          attachment_url: string | null
+          content: string | null
           created_at: string
           id: string
           scope: string
@@ -185,7 +188,10 @@ export type Database = {
         }
         Insert: {
           agrupamento_id?: string | null
-          content: string
+          attachment_name?: string | null
+          attachment_type?: string | null
+          attachment_url?: string | null
+          content?: string | null
           created_at?: string
           id?: string
           scope?: string
@@ -193,7 +199,10 @@ export type Database = {
         }
         Update: {
           agrupamento_id?: string | null
-          content?: string
+          attachment_name?: string | null
+          attachment_type?: string | null
+          attachment_url?: string | null
+          content?: string | null
           created_at?: string
           id?: string
           scope?: string

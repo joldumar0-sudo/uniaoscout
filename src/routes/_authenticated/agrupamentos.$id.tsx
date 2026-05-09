@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { CARGOS, cargoLabel, cargoIcon, type Cargo } from "@/lib/cargos";
+import { CARGOS, CARGO_MAP, cargoLabel, cargoIcon, type Cargo } from "@/lib/cargos";
 import { ArrowLeft, Upload, Trash2, FileText, Image as ImageIcon, UserPlus, Download } from "lucide-react";
 import { toast } from "sonner";
 
@@ -17,9 +17,15 @@ export const Route = createFileRoute("/_authenticated/agrupamentos/$id")({ compo
 
 function AgDetail() {
   const { id } = Route.useParams();
-  const { isAdmin, user } = useAuth();
+  const { isAdmin, user, profile, cargos } = useAuth();
   const [ag, setAg] = useState<any>(null);
   const [canManage, setCanManage] = useState(false);
+
+  const isOwn = profile?.agrupamento_id === id;
+  const isProvincial = isAdmin || cargos.some((c) =>
+    ["coord_provincial", "adj_coord_provincial"].includes(c.cargo)
+  );
+  const fullAccess = isOwn || isProvincial;
 
   useEffect(() => {
     (async () => {
@@ -52,27 +58,36 @@ function AgDetail() {
         </div>
       </div>
 
-      <Tabs defaultValue="membros">
-        <TabsList>
-          <TabsTrigger value="membros">Membros & Cargos</TabsTrigger>
-          <TabsTrigger value="docs">Documentos</TabsTrigger>
-          <TabsTrigger value="fotos">Fotos</TabsTrigger>
-        </TabsList>
-        <TabsContent value="membros" className="mt-4">
-          <MembrosTab agrupamentoId={id} canManage={canManage} />
-        </TabsContent>
-        <TabsContent value="docs" className="mt-4">
-          <DocsTab agrupamentoId={id} canManage={canManage} />
-        </TabsContent>
-        <TabsContent value="fotos" className="mt-4">
-          <FotosTab agrupamentoId={id} canManage={canManage} />
-        </TabsContent>
-      </Tabs>
+      {!fullAccess ? (
+        <>
+          <Card className="p-4 mb-4 border-amber-500/30 bg-amber-500/5 text-sm text-muted-foreground">
+            Você está a visualizar um agrupamento ao qual não pertence. Apenas a estrutura paroquial é visível.
+          </Card>
+          <MembrosTab agrupamentoId={id} canManage={false} readonlyParoquial />
+        </>
+      ) : (
+        <Tabs defaultValue="membros">
+          <TabsList>
+            <TabsTrigger value="membros">Membros & Cargos</TabsTrigger>
+            <TabsTrigger value="docs">Documentos</TabsTrigger>
+            <TabsTrigger value="fotos">Fotos</TabsTrigger>
+          </TabsList>
+          <TabsContent value="membros" className="mt-4">
+            <MembrosTab agrupamentoId={id} canManage={canManage} />
+          </TabsContent>
+          <TabsContent value="docs" className="mt-4">
+            <DocsTab agrupamentoId={id} canManage={canManage} />
+          </TabsContent>
+          <TabsContent value="fotos" className="mt-4">
+            <FotosTab agrupamentoId={id} canManage={canManage} />
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 }
 
-function MembrosTab({ agrupamentoId, canManage }: { agrupamentoId: string; canManage: boolean }) {
+function MembrosTab({ agrupamentoId, canManage, readonlyParoquial }: { agrupamentoId: string; canManage: boolean; readonlyParoquial?: boolean }) {
   const [noms, setNoms] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
@@ -149,33 +164,39 @@ function MembrosTab({ agrupamentoId, canManage }: { agrupamentoId: string; canMa
         )}
       </div>
 
-      {noms.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Nenhum cargo atribuído neste agrupamento.</p>
-      ) : (
-        <div className="space-y-2">
-          {noms.map((n: any) => {
-            const Icon = cargoIcon(n.cargo);
-            return (
-              <div key={n.id} className="flex items-center justify-between p-3 rounded-md border bg-card">
-                <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center">
-                    <Icon className="h-5 w-5" />
+      {(() => {
+        const visible = readonlyParoquial
+          ? noms.filter((n: any) => CARGO_MAP[n.cargo as Cargo]?.grupo === "gestao")
+          : noms;
+        if (visible.length === 0) {
+          return <p className="text-sm text-muted-foreground">Nenhum cargo {readonlyParoquial ? "paroquial" : ""} atribuído.</p>;
+        }
+        return (
+          <div className="space-y-2">
+            {visible.map((n: any) => {
+              const Icon = cargoIcon(n.cargo);
+              return (
+                <div key={n.id} className="flex items-center justify-between p-3 rounded-md border bg-card">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="font-medium">{n.profiles?.full_name ?? n.profiles?.email ?? "—"}</div>
+                      <div className="text-xs text-muted-foreground">{cargoLabel(n.cargo)}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-medium">{n.profiles?.full_name ?? n.profiles?.email ?? "—"}</div>
-                    <div className="text-xs text-muted-foreground">{cargoLabel(n.cargo)}</div>
-                  </div>
+                  {canManage && (
+                    <Button variant="ghost" size="icon" onClick={() => remover(n.id)}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  )}
                 </div>
-                {canManage && (
-                  <Button variant="ghost" size="icon" onClick={() => remover(n.id)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        );
+      })()}
     </Card>
   );
 }
