@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTheme, APP_VERSION, APP_DEVELOPER, type ThemeMode } from "@/lib/theme";
-import { Sun, Moon, Monitor, Mail, Phone, User } from "lucide-react";
+import { useChatNotifications } from "@/lib/chat-notifications";
+import { Sun, Moon, Monitor, Mail, Phone, User, Bell, BellOff, BellRing } from "lucide-react";
+import { toast } from "sonner";
 import logo from "@/assets/logo-ecm.png";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({ component: Page });
