@@ -12,10 +12,20 @@ export const Route = createFileRoute("/_authenticated/configuracoes")({ componen
 function Page() {
   const { mode, setMode } = useTheme();
   const { permission, requestPermission, unread, unreadProvincial, unreadAgrupamento } = useChatNotifications();
+  const opts: { v: ThemeMode; label: string; Icon: any }[] = [
     { v: "light", label: "Claro", Icon: Sun },
     { v: "dark", label: "Escuro", Icon: Moon },
     { v: "auto", label: "Automático", Icon: Monitor },
   ];
+
+  const askPerm = async () => {
+    await requestPermission();
+    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+      toast.success("Notificações activadas em tempo real");
+    } else {
+      toast.error("Permissão de notificações negada");
+    }
+  };
 
   return (
     <div className="p-4 sm:p-8 max-w-3xl mx-auto space-y-6">
