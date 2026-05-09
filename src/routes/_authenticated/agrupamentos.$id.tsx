@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { CARGOS, cargoLabel, cargoIcon, type Cargo } from "@/lib/cargos";
+import { CARGOS, CARGO_MAP, cargoLabel, cargoIcon, type Cargo } from "@/lib/cargos";
 import { ArrowLeft, Upload, Trash2, FileText, Image as ImageIcon, UserPlus, Download } from "lucide-react";
 import { toast } from "sonner";
 
