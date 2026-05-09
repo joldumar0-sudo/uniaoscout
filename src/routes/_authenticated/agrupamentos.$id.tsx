@@ -17,9 +17,15 @@ export const Route = createFileRoute("/_authenticated/agrupamentos/$id")({ compo
 
 function AgDetail() {
   const { id } = Route.useParams();
-  const { isAdmin, user } = useAuth();
+  const { isAdmin, user, profile, cargos } = useAuth();
   const [ag, setAg] = useState<any>(null);
   const [canManage, setCanManage] = useState(false);
+
+  const isOwn = profile?.agrupamento_id === id;
+  const isProvincial = isAdmin || cargos.some((c) =>
+    ["coord_provincial", "adj_coord_provincial"].includes(c.cargo)
+  );
+  const fullAccess = isOwn || isProvincial;
 
   useEffect(() => {
     (async () => {
@@ -52,27 +58,36 @@ function AgDetail() {
         </div>
       </div>
 
-      <Tabs defaultValue="membros">
-        <TabsList>
-          <TabsTrigger value="membros">Membros & Cargos</TabsTrigger>
-          <TabsTrigger value="docs">Documentos</TabsTrigger>
-          <TabsTrigger value="fotos">Fotos</TabsTrigger>
-        </TabsList>
-        <TabsContent value="membros" className="mt-4">
-          <MembrosTab agrupamentoId={id} canManage={canManage} />
-        </TabsContent>
-        <TabsContent value="docs" className="mt-4">
-          <DocsTab agrupamentoId={id} canManage={canManage} />
-        </TabsContent>
-        <TabsContent value="fotos" className="mt-4">
-          <FotosTab agrupamentoId={id} canManage={canManage} />
-        </TabsContent>
-      </Tabs>
+      {!fullAccess ? (
+        <>
+          <Card className="p-4 mb-4 border-amber-500/30 bg-amber-500/5 text-sm text-muted-foreground">
+            Você está a visualizar um agrupamento ao qual não pertence. Apenas a estrutura paroquial é visível.
+          </Card>
+          <MembrosTab agrupamentoId={id} canManage={false} readonlyParoquial />
+        </>
+      ) : (
+        <Tabs defaultValue="membros">
+          <TabsList>
+            <TabsTrigger value="membros">Membros & Cargos</TabsTrigger>
+            <TabsTrigger value="docs">Documentos</TabsTrigger>
+            <TabsTrigger value="fotos">Fotos</TabsTrigger>
+          </TabsList>
+          <TabsContent value="membros" className="mt-4">
+            <MembrosTab agrupamentoId={id} canManage={canManage} />
+          </TabsContent>
+          <TabsContent value="docs" className="mt-4">
+            <DocsTab agrupamentoId={id} canManage={canManage} />
+          </TabsContent>
+          <TabsContent value="fotos" className="mt-4">
+            <FotosTab agrupamentoId={id} canManage={canManage} />
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 }
 
-function MembrosTab({ agrupamentoId, canManage }: { agrupamentoId: string; canManage: boolean }) {
+function MembrosTab({ agrupamentoId, canManage, readonlyParoquial }: { agrupamentoId: string; canManage: boolean; readonlyParoquial?: boolean }) {
   const [noms, setNoms] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
