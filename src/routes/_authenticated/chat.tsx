@@ -221,6 +221,20 @@ function ChatRoom({ scope, agrupamentoId }: { scope: "provincial" | "agrupamento
           disabled={uploading || recording} />
         <Button type="submit" disabled={uploading || recording || !text.trim()}><Send className="h-4 w-4" /></Button>
       </form>
+      <AlertDialog open={!!confirmId} onOpenChange={(o) => !o && setConfirmId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Eliminar mensagem?</AlertDialogTitle>
+            <AlertDialogDescription>Esta ação não pode ser desfeita.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => { if (confirmId) { await deleteMsg(confirmId); setConfirmId(null); } }}
+            >Eliminar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
