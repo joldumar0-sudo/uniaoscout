@@ -167,7 +167,17 @@ function ChatRoom({ scope, agrupamentoId }: { scope: "provincial" | "agrupamento
           const canDelete = mine || isAdmin;
           return (
             <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"} group`}>
-              <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${mine ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
+              <div
+                className={`max-w-[75%] rounded-2xl px-4 py-2 select-none ${mine ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
+                onContextMenu={(e) => { if (canDelete) { e.preventDefault(); setConfirmId(m.id); } }}
+                onTouchStart={() => {
+                  if (!canDelete) return;
+                  if (pressTimer.current) clearTimeout(pressTimer.current);
+                  pressTimer.current = setTimeout(() => setConfirmId(m.id), 500);
+                }}
+                onTouchEnd={() => { if (pressTimer.current) { clearTimeout(pressTimer.current); pressTimer.current = null; } }}
+                onTouchMove={() => { if (pressTimer.current) { clearTimeout(pressTimer.current); pressTimer.current = null; } }}
+              >
                 {!mine && <div className="text-[10px] opacity-70 mb-0.5">{m.profiles?.full_name ?? m.profiles?.email}</div>}
                 {m.attachment_url && m.attachment_type === "image" && (
                   <a href={m.attachment_url} target="_blank" rel="noreferrer">
