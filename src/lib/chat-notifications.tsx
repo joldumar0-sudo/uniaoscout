@@ -68,7 +68,31 @@ export function ChatNotificationsProvider({ children }: { children: ReactNode })
         else setUnreadAg((n) => n + 1);
       })
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+
+    // Notifications for new activities, photos, and alcateia posts
+    const extra = supabase
+      .channel(`activity-notify-${user.id}`)
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "atividades" }, async (payload: any) => {
+        const r = payload.new;
+        if (r.created_by === user.id) return;
+        if (r.scope === "agrupamento" && !isAdmin && r.agrupamento_id !== agId) return;
+        notify("Nova atividade", r.titulo || "Atividade publicada");
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "photos" }, async (payload: any) => {
+        const r = payload.new;
+        if (r.uploaded_by === user.id) return;
+        if (r.agrupamento_id && !isAdmin && r.agrupamento_id !== agId) return;
+        notify("Nova foto na galeria", r.caption || "Foto publicada");
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "alcateia_posts" }, async (payload: any) => {
+        const r = payload.new;
+        if (r.created_by === user.id) return;
+        if (r.agrupamento_id && !isAdmin && r.agrupamento_id !== agId) return;
+        notify("Nova publicação Alcateia", r.titulo || "Publicação");
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); supabase.removeChannel(extra); };
   }, [user?.id, profile?.agrupamento_id, isAdmin]);
 
   // Auto-clear when navigating to chat
