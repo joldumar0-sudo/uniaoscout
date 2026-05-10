@@ -8,6 +8,16 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Send, MessageSquare, Paperclip, Mic, Square, Trash2, FileIcon, Download } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/chat")({ component: Chat });
 
@@ -43,10 +53,12 @@ function ChatRoom({ scope, agrupamentoId }: { scope: "provincial" | "agrupamento
   const [text, setText] = useState("");
   const [uploading, setUploading] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let q = supabase.from("chat_messages")
@@ -155,7 +167,17 @@ function ChatRoom({ scope, agrupamentoId }: { scope: "provincial" | "agrupamento
           const canDelete = mine || isAdmin;
           return (
             <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"} group`}>
-              <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${mine ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
+              <div
+                className={`max-w-[75%] rounded-2xl px-4 py-2 select-none ${mine ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
+                onContextMenu={(e) => { if (canDelete) { e.preventDefault(); setConfirmId(m.id); } }}
+                onTouchStart={() => {
+                  if (!canDelete) return;
+                  if (pressTimer.current) clearTimeout(pressTimer.current);
+                  pressTimer.current = setTimeout(() => setConfirmId(m.id), 500);
+                }}
+                onTouchEnd={() => { if (pressTimer.current) { clearTimeout(pressTimer.current); pressTimer.current = null; } }}
+                onTouchMove={() => { if (pressTimer.current) { clearTimeout(pressTimer.current); pressTimer.current = null; } }}
+              >
                 {!mine && <div className="text-[10px] opacity-70 mb-0.5">{m.profiles?.full_name ?? m.profiles?.email}</div>}
                 {m.attachment_url && m.attachment_type === "image" && (
                   <a href={m.attachment_url} target="_blank" rel="noreferrer">
@@ -199,6 +221,20 @@ function ChatRoom({ scope, agrupamentoId }: { scope: "provincial" | "agrupamento
           disabled={uploading || recording} />
         <Button type="submit" disabled={uploading || recording || !text.trim()}><Send className="h-4 w-4" /></Button>
       </form>
+      <AlertDialog open={!!confirmId} onOpenChange={(o) => !o && setConfirmId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Eliminar mensagem?</AlertDialogTitle>
+            <AlertDialogDescription>Esta ação não pode ser desfeita.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => { if (confirmId) { await deleteMsg(confirmId); setConfirmId(null); } }}
+            >Eliminar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
