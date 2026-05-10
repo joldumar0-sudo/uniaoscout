@@ -53,10 +53,12 @@ function ChatRoom({ scope, agrupamentoId }: { scope: "provincial" | "agrupamento
   const [text, setText] = useState("");
   const [uploading, setUploading] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let q = supabase.from("chat_messages")
