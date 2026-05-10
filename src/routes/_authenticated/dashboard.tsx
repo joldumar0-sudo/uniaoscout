@@ -7,11 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Users, Boxes, MessageSquare, Library, Image as ImageIcon, PawPrint, Shield } from "lucide-react";
 import { cargoLabel, cargoIcon } from "@/lib/cargos";
 import { AtividadesCard } from "@/components/atividades-card";
+import { QuickToggles } from "@/components/quick-toggles";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({ component: Dashboard });
 
 function Dashboard() {
   const { profile, isAdmin, cargos } = useAuth();
+  const { t } = useI18n();
   const [stats, setStats] = useState({ agrupamentos: 0, equipamentos: 0, membros: 0 });
   const [agName, setAgName] = useState<string | null>(null);
 
@@ -31,19 +34,20 @@ function Dashboard() {
   }, [profile?.agrupamento_id]);
 
   const quickLinks = [
-    { to: "/chat", label: "Chat", icon: MessageSquare, color: "bg-primary" },
-    { to: "/biblioteca", label: "Biblioteca", icon: Library, color: "bg-navy" },
-    { to: "/galeria", label: "Galeria", icon: ImageIcon, color: "bg-khaki text-khaki-foreground" },
+    { to: "/chat", label: t("nav.chat"), icon: MessageSquare, color: "bg-primary" },
+    { to: "/biblioteca", label: t("nav.biblioteca"), icon: Library, color: "bg-navy" },
+    { to: "/galeria", label: t("nav.galeria"), icon: ImageIcon, color: "bg-khaki text-khaki-foreground" },
   ];
 
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto">
+      <QuickToggles />
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">
-          Olá, {profile?.full_name?.split(" ")[0] ?? "membro"}!
+          {t("dash.hello")}, {profile?.full_name?.split(" ")[0] ?? t("dash.member")}!
         </h1>
         <p className="text-muted-foreground mt-1">
-          {isAdmin ? "Painel Provincial de Administração" : agName ? `Agrupamento: ${agName}` : "Dashboard"}
+          {isAdmin ? t("dash.admin_panel") : agName ? `${t("dash.group")}: ${agName}` : t("dash.dashboard")}
         </p>
       </div>
 
