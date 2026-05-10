@@ -50,7 +50,7 @@ function ChatRoom({ scope, agrupamentoId }: { scope: "provincial" | "agrupamento
 
   useEffect(() => {
     let q = supabase.from("chat_messages")
-      .select("id, content, user_id, created_at, scope, agrupamento_id, attachment_url, attachment_type, attachment_name, profiles:profiles!chat_messages_user_id_fkey(full_name, email)")
+      .select("id, content, user_id, created_at, scope, agrupamento_id, attachment_url, attachment_type, attachment_name, profiles:profiles!chat_messages_user_id_profile_fkey(full_name, email)")
       .eq("scope", scope)
       .order("created_at", { ascending: true })
       .limit(500);
