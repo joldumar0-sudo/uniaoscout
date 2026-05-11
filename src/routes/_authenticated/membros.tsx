@@ -8,29 +8,40 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { CARGOS, cargoLabel, cargoIcon, type Cargo } from "@/lib/cargos";
-import { UserCog, UserPlus, Trash2 } from "lucide-react";
+import { UserCog, UserPlus, Trash2, Crown, ShieldOff } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/membros")({ component: Membros });
 
 function Membros() {
-  const { isAdmin, user } = useAuth();
+  const { isAdmin, isSuperAdmin, user } = useAuth();
   const [profiles, setProfiles] = useState<any[]>([]);
   const [ags, setAgs] = useState<any[]>([]);
   const [noms, setNoms] = useState<any[]>([]);
+  const [admins, setAdmins] = useState<any[]>([]);
+  const [confirmExo, setConfirmExo] = useState<{ kind: "nom" | "admin"; id: string; label: string } | null>(null);
+  const [openAdmin, setOpenAdmin] = useState(false);
+  const [adminUserId, setAdminUserId] = useState("");
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState("");
   const [cargo, setCargo] = useState<Cargo>("padre");
   const [agId, setAgId] = useState<string>("");
 
   const load = async () => {
-    const [{ data: p }, { data: a }, { data: n }] = await Promise.all([
+    const [{ data: p }, { data: a }, { data: n }, { data: r }] = await Promise.all([
       supabase.from("profiles").select("id, full_name, email, agrupamento_id").order("full_name"),
       supabase.from("agrupamentos").select("id, numero, nome, paroquia").order("numero"),
       supabase.from("nominations").select("id, cargo, user_id, agrupamento_id, profiles:profiles!nominations_user_id_fkey(full_name, email)"),
+      supabase.from("user_roles").select("id, user_id, role").eq("role", "admin"),
     ]);
-    setProfiles(p ?? []); setAgs(a ?? []); setNoms(n ?? []);
+    const profs = p ?? [];
+    const adminsWithProf = (r ?? []).map((row: any) => ({
+      ...row,
+      profiles: profs.find((x: any) => x.id === row.user_id) ?? null,
+    }));
+    setProfiles(profs); setAgs(a ?? []); setNoms(n ?? []); setAdmins(adminsWithProf);
   };
 
   const updateAg = async (id: string, patch: { nome?: string; paroquia?: string }) => {
@@ -63,9 +74,23 @@ function Membros() {
     toast.success("Agrupamento atribuído"); load();
   };
 
-  const removeNom = async (id: string) => {
-    await supabase.from("nominations").delete().eq("id", id);
-    load();
+  const grantAdmin = async () => {
+    if (!adminUserId) return toast.error("Escolha um membro");
+    const { error } = await supabase.from("user_roles").insert({ user_id: adminUserId, role: "admin" });
+    if (error) return toast.error(error.message);
+    toast.success("Administrador adicionado");
+    setOpenAdmin(false); setAdminUserId(""); load();
+  };
+
+  const doExonerate = async () => {
+    if (!confirmExo) return;
+    const { kind, id } = confirmExo;
+    const { error } = kind === "nom"
+      ? await supabase.from("nominations").delete().eq("id", id)
+      : await supabase.from("user_roles").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Exoneração efetuada");
+    setConfirmExo(null); load();
   };
 
   const agName = (id: string | null) => {
@@ -158,6 +183,59 @@ function Membros() {
         </div>
       </Card>
 
+      {isSuperAdmin && (
+        <Card className="p-6 mb-6 border-primary/40">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold flex items-center gap-2">
+              <Crown className="h-5 w-5 text-primary" /> Administradores ({admins.length})
+            </h2>
+            <Dialog open={openAdmin} onOpenChange={setOpenAdmin}>
+              <DialogTrigger asChild>
+                <Button size="sm"><UserPlus className="h-4 w-4 mr-2" />Adicionar admin</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader><DialogTitle>Adicionar Administrador</DialogTitle></DialogHeader>
+                <div className="space-y-3">
+                  <Label>Membro</Label>
+                  <Select value={adminUserId} onValueChange={setAdminUserId}>
+                    <SelectTrigger><SelectValue placeholder="Escolher..." /></SelectTrigger>
+                    <SelectContent className="max-h-72">
+                      {profiles.filter((p) => !admins.some((a) => a.user_id === p.id))
+                        .map((p) => <SelectItem key={p.id} value={p.id}>{p.full_name ?? p.email}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <DialogFooter><Button onClick={grantAdmin}>Confirmar</Button></DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">
+            O Administrador é uma categoria independente do Coordenador Provincial. Apenas Administradores podem nomear ou exonerar outros Administradores.
+          </p>
+          <div className="space-y-2">
+            {admins.map((r: any) => (
+              <div key={r.id} className="flex items-center justify-between p-3 rounded border">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded bg-primary/10 text-primary flex items-center justify-center">
+                    <Crown className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="font-medium">{r.profiles?.full_name ?? r.profiles?.email}</div>
+                    <div className="text-xs text-muted-foreground">Administrador</div>
+                  </div>
+                </div>
+                {r.user_id !== user?.id && (
+                  <Button size="sm" variant="outline" onClick={() => setConfirmExo({ kind: "admin", id: r.id, label: `Administrador · ${r.profiles?.full_name ?? r.profiles?.email}` })}>
+                    <ShieldOff className="h-4 w-4 mr-2" />Exonerar
+                  </Button>
+                )}
+              </div>
+            ))}
+            {admins.length === 0 && <p className="text-sm text-muted-foreground">Nenhum administrador.</p>}
+          </div>
+        </Card>
+      )}
+
       <Card className="p-6">
         <h2 className="font-semibold mb-3">Todas as Nomeações ({noms.length})</h2>
         <div className="space-y-2">
@@ -174,14 +252,29 @@ function Membros() {
                     <div className="text-xs text-muted-foreground">{cargoLabel(n.cargo)} · {agName(n.agrupamento_id)}</div>
                   </div>
                 </div>
-                <Button size="icon" variant="ghost" onClick={() => removeNom(n.id)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
+                <Button size="sm" variant="outline" onClick={() => setConfirmExo({ kind: "nom", id: n.id, label: `${cargoLabel(n.cargo)} · ${n.profiles?.full_name ?? n.profiles?.email}` })}>
+                  <ShieldOff className="h-4 w-4 mr-2" />Exonerar
                 </Button>
               </div>
             );
           })}
         </div>
       </Card>
+
+      <AlertDialog open={!!confirmExo} onOpenChange={(o) => !o && setConfirmExo(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exoneração</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem a certeza que pretende exonerar: <strong>{confirmExo?.label}</strong>? Esta ação remove o cargo do membro.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={doExonerate}>Exonerar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
