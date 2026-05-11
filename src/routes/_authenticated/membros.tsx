@@ -16,10 +16,14 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated/membros")({ component: Membros });
 
 function Membros() {
-  const { isAdmin, user } = useAuth();
+  const { isAdmin, isSuperAdmin, user } = useAuth();
   const [profiles, setProfiles] = useState<any[]>([]);
   const [ags, setAgs] = useState<any[]>([]);
   const [noms, setNoms] = useState<any[]>([]);
+  const [admins, setAdmins] = useState<any[]>([]);
+  const [confirmExo, setConfirmExo] = useState<{ kind: "nom" | "admin"; id: string; label: string } | null>(null);
+  const [openAdmin, setOpenAdmin] = useState(false);
+  const [adminUserId, setAdminUserId] = useState("");
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState("");
   const [cargo, setCargo] = useState<Cargo>("padre");
