@@ -30,12 +30,13 @@ function Membros() {
   const [agId, setAgId] = useState<string>("");
 
   const load = async () => {
-    const [{ data: p }, { data: a }, { data: n }] = await Promise.all([
+    const [{ data: p }, { data: a }, { data: n }, { data: r }] = await Promise.all([
       supabase.from("profiles").select("id, full_name, email, agrupamento_id").order("full_name"),
       supabase.from("agrupamentos").select("id, numero, nome, paroquia").order("numero"),
       supabase.from("nominations").select("id, cargo, user_id, agrupamento_id, profiles:profiles!nominations_user_id_fkey(full_name, email)"),
+      supabase.from("user_roles").select("id, user_id, role, profiles:profiles!user_roles_user_id_fkey(full_name, email)").eq("role", "admin"),
     ]);
-    setProfiles(p ?? []); setAgs(a ?? []); setNoms(n ?? []);
+    setProfiles(p ?? []); setAgs(a ?? []); setNoms(n ?? []); setAdmins(r ?? []);
   };
 
   const updateAg = async (id: string, patch: { nome?: string; paroquia?: string }) => {
@@ -68,9 +69,23 @@ function Membros() {
     toast.success("Agrupamento atribuído"); load();
   };
 
-  const removeNom = async (id: string) => {
-    await supabase.from("nominations").delete().eq("id", id);
-    load();
+  const grantAdmin = async () => {
+    if (!adminUserId) return toast.error("Escolha um membro");
+    const { error } = await supabase.from("user_roles").insert({ user_id: adminUserId, role: "admin" });
+    if (error) return toast.error(error.message);
+    toast.success("Administrador adicionado");
+    setOpenAdmin(false); setAdminUserId(""); load();
+  };
+
+  const doExonerate = async () => {
+    if (!confirmExo) return;
+    const { kind, id } = confirmExo;
+    const { error } = kind === "nom"
+      ? await supabase.from("nominations").delete().eq("id", id)
+      : await supabase.from("user_roles").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Exoneração efetuada");
+    setConfirmExo(null); load();
   };
 
   const agName = (id: string | null) => {
