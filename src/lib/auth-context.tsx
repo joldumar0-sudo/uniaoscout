@@ -28,6 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [cargos, setCargos] = useState<{ cargo: Cargo; agrupamento_id: string | null }[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const provincialFlag = (noms ?? []).some((n: any) =>
       ["coord_provincial", "adj_coord_provincial"].includes(n.cargo)
     );
+    setIsSuperAdmin(adminFlag);
     setIsAdmin(adminFlag || provincialFlag);
     setCargos((noms ?? []) as any);
   };
@@ -52,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (s?.user) {
         setTimeout(() => loadAll(s.user.id), 0);
       } else {
-        setProfile(null); setIsAdmin(false); setCargos([]);
+        setProfile(null); setIsAdmin(false); setIsSuperAdmin(false); setCargos([]);
       }
     });
     supabase.auth.getSession().then(({ data: { session: s } }) => {
@@ -67,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <Ctx.Provider value={{
-      loading, session, user: session?.user ?? null, profile, isAdmin, cargos, refresh
+      loading, session, user: session?.user ?? null, profile, isAdmin, isSuperAdmin, cargos, refresh
     }}>
       {children}
     </Ctx.Provider>
