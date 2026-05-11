@@ -178,6 +178,59 @@ function Membros() {
         </div>
       </Card>
 
+      {isSuperAdmin && (
+        <Card className="p-6 mb-6 border-primary/40">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold flex items-center gap-2">
+              <Crown className="h-5 w-5 text-primary" /> Administradores ({admins.length})
+            </h2>
+            <Dialog open={openAdmin} onOpenChange={setOpenAdmin}>
+              <DialogTrigger asChild>
+                <Button size="sm"><UserPlus className="h-4 w-4 mr-2" />Adicionar admin</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader><DialogTitle>Adicionar Administrador</DialogTitle></DialogHeader>
+                <div className="space-y-3">
+                  <Label>Membro</Label>
+                  <Select value={adminUserId} onValueChange={setAdminUserId}>
+                    <SelectTrigger><SelectValue placeholder="Escolher..." /></SelectTrigger>
+                    <SelectContent className="max-h-72">
+                      {profiles.filter((p) => !admins.some((a) => a.user_id === p.id))
+                        .map((p) => <SelectItem key={p.id} value={p.id}>{p.full_name ?? p.email}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <DialogFooter><Button onClick={grantAdmin}>Confirmar</Button></DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">
+            O Administrador é uma categoria independente do Coordenador Provincial. Apenas Administradores podem nomear ou exonerar outros Administradores.
+          </p>
+          <div className="space-y-2">
+            {admins.map((r: any) => (
+              <div key={r.id} className="flex items-center justify-between p-3 rounded border">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded bg-primary/10 text-primary flex items-center justify-center">
+                    <Crown className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="font-medium">{r.profiles?.full_name ?? r.profiles?.email}</div>
+                    <div className="text-xs text-muted-foreground">Administrador</div>
+                  </div>
+                </div>
+                {r.user_id !== user?.id && (
+                  <Button size="sm" variant="outline" onClick={() => setConfirmExo({ kind: "admin", id: r.id, label: `Administrador · ${r.profiles?.full_name ?? r.profiles?.email}` })}>
+                    <ShieldOff className="h-4 w-4 mr-2" />Exonerar
+                  </Button>
+                )}
+              </div>
+            ))}
+            {admins.length === 0 && <p className="text-sm text-muted-foreground">Nenhum administrador.</p>}
+          </div>
+        </Card>
+      )}
+
       <Card className="p-6">
         <h2 className="font-semibold mb-3">Todas as Nomeações ({noms.length})</h2>
         <div className="space-y-2">
@@ -194,14 +247,29 @@ function Membros() {
                     <div className="text-xs text-muted-foreground">{cargoLabel(n.cargo)} · {agName(n.agrupamento_id)}</div>
                   </div>
                 </div>
-                <Button size="icon" variant="ghost" onClick={() => removeNom(n.id)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
+                <Button size="sm" variant="outline" onClick={() => setConfirmExo({ kind: "nom", id: n.id, label: `${cargoLabel(n.cargo)} · ${n.profiles?.full_name ?? n.profiles?.email}` })}>
+                  <ShieldOff className="h-4 w-4 mr-2" />Exonerar
                 </Button>
               </div>
             );
           })}
         </div>
       </Card>
+
+      <AlertDialog open={!!confirmExo} onOpenChange={(o) => !o && setConfirmExo(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exoneração</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem a certeza que pretende exonerar: <strong>{confirmExo?.label}</strong>? Esta ação remove o cargo do membro.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={doExonerate}>Exonerar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
