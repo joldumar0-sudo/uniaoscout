@@ -17,6 +17,7 @@ export type AuthState = {
   user: User | null;
   profile: Profile | null;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   cargos: { cargo: Cargo; agrupamento_id: string | null }[];
   refresh: () => Promise<void>;
 };
