@@ -34,9 +34,14 @@ function Membros() {
       supabase.from("profiles").select("id, full_name, email, agrupamento_id").order("full_name"),
       supabase.from("agrupamentos").select("id, numero, nome, paroquia").order("numero"),
       supabase.from("nominations").select("id, cargo, user_id, agrupamento_id, profiles:profiles!nominations_user_id_fkey(full_name, email)"),
-      supabase.from("user_roles").select("id, user_id, role, profiles:profiles!user_roles_user_id_fkey(full_name, email)").eq("role", "admin"),
+      supabase.from("user_roles").select("id, user_id, role").eq("role", "admin"),
     ]);
-    setProfiles(p ?? []); setAgs(a ?? []); setNoms(n ?? []); setAdmins(r ?? []);
+    const profs = p ?? [];
+    const adminsWithProf = (r ?? []).map((row: any) => ({
+      ...row,
+      profiles: profs.find((x: any) => x.id === row.user_id) ?? null,
+    }));
+    setProfiles(profs); setAgs(a ?? []); setNoms(n ?? []); setAdmins(adminsWithProf);
   };
 
   const updateAg = async (id: string, patch: { nome?: string; paroquia?: string }) => {
