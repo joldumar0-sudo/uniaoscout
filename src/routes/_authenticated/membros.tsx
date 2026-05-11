@@ -33,15 +33,15 @@ function Membros() {
     const [{ data: p }, { data: a }, { data: n }, { data: r }] = await Promise.all([
       supabase.from("profiles").select("id, full_name, email, agrupamento_id").order("full_name"),
       supabase.from("agrupamentos").select("id, numero, nome, paroquia").order("numero"),
-      supabase.from("nominations").select("id, cargo, user_id, agrupamento_id, profiles:profiles!nominations_user_id_fkey(full_name, email)"),
+      supabase.from("nominations").select("id, cargo, user_id, agrupamento_id").order("nominated_at", { ascending: false }),
       supabase.from("user_roles").select("id, user_id, role").eq("role", "admin"),
     ]);
     const profs = p ?? [];
-    const adminsWithProf = (r ?? []).map((row: any) => ({
+    const withProf = (rows: any[]) => rows.map((row) => ({
       ...row,
       profiles: profs.find((x: any) => x.id === row.user_id) ?? null,
     }));
-    setProfiles(profs); setAgs(a ?? []); setNoms(n ?? []); setAdmins(adminsWithProf);
+    setProfiles(profs); setAgs(a ?? []); setNoms(withProf(n ?? [])); setAdmins(withProf(r ?? []));
   };
 
   const updateAg = async (id: string, patch: { nome?: string; paroquia?: string }) => {
